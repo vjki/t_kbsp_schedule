@@ -10,6 +10,7 @@ import re
 import requests
 import csv
 import time
+from core.ui import print_line
 from openpyxl import load_workbook
 from bs4 import BeautifulSoup
 from os import path, listdir, remove
@@ -33,18 +34,18 @@ def check_schedule(schedule_dir):
         for sub_dir in range(1, 6):
             current_dir = path.join(schedule_dir, str(sub_dir))
             for file_name in listdir(current_dir):
-                print(f"Working with file \"{file_name}\"...")
+                print_line(f"Working with file \"{file_name}\"...")
                 wb = load_workbook(path.join(current_dir, file_name))
                 last_modified = wb.properties.modified
-                print(f'Last modified {last_modified}')
+                print_line(f'Last modified {last_modified}')
                 with open(path.join(schedule_dir, 'lmod.csv'), 'a', encoding='utf-8') as f:
                     file_writer = csv.writer(f)
                     t = path.getmtime(path.join(current_dir, file_name))
                     last_update = datetime.fromtimestamp(t)
                     file_writer.writerow([sub_dir, file_name, last_modified, last_update])
-                    print('Write SUCCESS', end='\n\n')
+                    print_line('Write SUCCESS', end='\n\n')
     except OSError as e:
-        print(f'ERROR. {e}', end='\n\n')
+        print_line(f'ERROR. {e}', end='\n\n')
 
 
 def get_schedule(schedule_dir):
@@ -61,11 +62,11 @@ def get_schedule(schedule_dir):
     links = soup.find_all(href=re.compile(r"КБиСП.*xlsx"))
     for link in links:
         file_name = link.get('href').split('/')[-1]
-        print('Downloading ' + file_name + '... ')
+        print_line('Downloading ' + file_name + '... ')
         with open(path.join(schedule_dir, file_name.split()[1], file_name), 'wb') as f:
             urf = requests.get(link.get('href'))
             f.write(urf.content)
-        print('SUCCESS', end="\n\n")
+        print_line('SUCCESS', end="\n\n")
 
 
 if __name__ == "__main__":

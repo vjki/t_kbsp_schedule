@@ -32,16 +32,17 @@ def greetings(version):
     print(Fore.CYAN + "  ---------------------------------------", end="\n\n")
 
 
-def print_line(message, status='info'):
+def print_line(message, status='info', end='\n'):
     """Print text message in console.
 
     """
     if status == 'info':
-        print(Style.DIM + Fore.WHITE + '  [' + Fore.BLUE + 'i' + Fore.WHITE + ']: ' + Style.RESET_ALL + message)
+        print(Style.DIM + Fore.WHITE + '  [' + Fore.BLUE + 'i' + Fore.WHITE + ']: ' + Style.RESET_ALL + message, end=end)
     elif status == 'warning':
-        print(Style.DIM + Fore.WHITE + '  [' + Fore.RED + '!' + Fore.WHITE + ']: ' + Style.RESET_ALL + message)
+        print(Style.DIM + Fore.WHITE + '  [' + Fore.RED + '!' + Fore.WHITE + ']: ' + Style.RESET_ALL + message, end=end)
 
 
 def get_line(message=""):
     x = input(Style.DIM + Fore.WHITE + '  [' + Fore.GREEN + '>' + Fore.WHITE + '] ' + Style.RESET_ALL + message)
+    print()
     return x
