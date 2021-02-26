@@ -7,13 +7,11 @@
 #
 #
 import os
-from colorama import init, Fore, Back, Style
-
-init()
+from rich import print
 
 
 # -- Functions --
-def greetings(version):
+def disp_greetings(version):
     """Print the intro.
 
     • version: str - version of program
@@ -21,28 +19,8 @@ def greetings(version):
     with open(os.path.join('core', 'static', 'logo'), 'r') as fr:
         print('\n')
         for line in fr:
-            print(Fore.BLUE + line, end="")
+            print("[bold red]" + line + "[/bold red]", end="")
         print('\n')
-    print(
-        Fore.WHITE + Style.DIM + "             by" + Style.RESET_ALL + Style.BRIGHT + Fore.WHITE + " vjki " + Style.RESET_ALL + Style.DIM + Fore.WHITE + "(@ikjvvjki)" + Style.RESET_ALL,
-        end="\n")
-    print(Fore.CYAN + "  ---------------------------------------")
-    print(Fore.CYAN + f"  | {version} | ", end="")
-    print(Fore.CYAN + Style.DIM + "Monitors the schedule change" + Style.RESET_ALL + Fore.CYAN + " |")
-    print(Fore.CYAN + "  ---------------------------------------", end="\n\n")
 
 
-def print_line(message, status='info', end='\n'):
-    """Print text message in console.
 
-    """
-    if status == 'info':
-        print(Style.DIM + Fore.WHITE + '  [' + Fore.BLUE + 'i' + Fore.WHITE + ']: ' + Style.RESET_ALL + message, end=end)
-    elif status == 'warning':
-        print(Style.DIM + Fore.WHITE + '  [' + Fore.RED + '!' + Fore.WHITE + ']: ' + Style.RESET_ALL + message, end=end)
-
-
-def get_line(message=""):
-    x = input(Style.DIM + Fore.WHITE + '  [' + Fore.GREEN + '>' + Fore.WHITE + '] ' + Style.RESET_ALL + message)
-    print()
-    return x

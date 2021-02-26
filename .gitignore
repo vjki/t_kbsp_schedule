@@ -1,2 +1,7 @@
 schedule/
 json/
+
+.idea/
+core/__pycache__/
+kbsp_schedule/__pycache__/
+.check_schedule.py.swp
