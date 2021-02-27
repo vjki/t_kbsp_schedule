@@ -7,7 +7,7 @@
 #
 #
 import os
-from rich import print
+import rich
 
 
 # -- Functions --
@@ -17,10 +17,11 @@ def disp_greetings(version):
     • version: str - version of program
     """
     with open(os.path.join('core', 'static', 'logo'), 'r') as fr:
-        print('\n')
+        rich.print('\n')
+        print(f"<-- IKBSP -->\t\t\t\t\t\t\t{version}")
         for line in fr:
-            print("[bold red]" + line + "[/bold red]", end="")
-        print('\n')
+            rich.print(f"[bold red]" + line + "[/bold red]", end="")
+        rich.print('\n')
 
 
 

@@ -28,6 +28,7 @@ def check_schedule(schedule_dir):
     • schedule_dir - string which contain way to schedule dir
 
     """
+    # TODO: Understand why this fuction working so long time
     try:
         remove(path.join(schedule_dir, 'lmod.csv'))
         for sub_dir in range(1, 6):
