@@ -60,7 +60,7 @@ class KbspSchedule:
 
         """
         return getting.get_schedule(self.schedule_dir)
-    
+
     def display_status(self):
         """Visualize data from lmod.csv.
 
@@ -85,11 +85,11 @@ def c_print(message, border='white', end='\n\n'):
     print(Panel(message, border_style=border, expand=False), end=end)
 
 
-
 # -- launching --
 ui.disp_greetings(version)
 schdeule = KbspSchedule()
-schdeule.display_status()
+if schdeule.display_status():
+    c_print("[bold red]Fail.[/bold red] Something went wrong... (in ui.py)", border='red')
 if schdeule.FIRST_TIME:
     c_print("[bold]Hello and welcome![/bold] Type |[bold green]> [/bold green]help| comand to see what i can.")
 

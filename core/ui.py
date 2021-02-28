@@ -16,12 +16,17 @@ def disp_greetings(version):
 
     • version: str - version of program
     """
-    with open(os.path.join('core', 'static', 'logo'), 'r') as fr:
-        rich.print('\n')
-        print(f"<-- IKBSP -->\t\t\t\t\t\t\t{version}")
-        for line in fr:
-            rich.print(f"[bold red]" + line + "[/bold red]", end="")
-        rich.print('\n')
+    try:
+        with open(os.path.join('core', 'static', 'logo'), 'r') as fr:
+            rich.print('\n')
+            print(f"<-- IKBSP -->\t\t\t\t\t\t\t{version}")
+            for line in fr:
+                rich.print(f"[bold red]" + line + "[/bold red]", end="")
+            rich.print('\n')
+        return True
+    except:
+        return False
+
 
 
 
