@@ -8,6 +8,7 @@
 #
 import os
 import rich
+from datetime import datetime
 
 
 # -- Functions --
@@ -16,6 +17,7 @@ def disp_greetings(version):
 
     • version: str - version of program
     """
+    dt = datetime.now()
     try:
         with open(os.path.join('core', 'static', 'logo'), 'r') as fr:
             rich.print('\n')
@@ -23,6 +25,7 @@ def disp_greetings(version):
             for line in fr:
                 rich.print(f"[bold red]" + line + "[/bold red]", end="")
             rich.print('\n')
+        rich.print(f"[bold]Starts at:[/bold] [bold yellow]{dt.strftime('%d-%m-%Y %H:%M:%S')}[/bold yellow]\n")
         return True
     except:
         return False

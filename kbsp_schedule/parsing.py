@@ -7,8 +7,7 @@
 #
 #
 import openpyxl
-import json
-from core.ui import print_line 
+import json 
 from os import path, listdir
 
 
@@ -47,7 +46,6 @@ def pars_for_cells(schedule_dir):
             for row in sheet.iter_rows(2):
                 for cell in row:
                     if cell.value is not None and '-' in str(cell.value):
-                        print_line(f"Catch group \"{cell.value}\" in file \"{file_name}\"", end="\n\n")
                         d['cells'].append(cell.coordinate)
                 break
             yield d
@@ -57,7 +55,7 @@ def pars_main(d_cells, json_dir):
     """Parsing Excel.
     Function collects data from .xlsx file and return it as a list of dictionary.
 
-    • d_cells - dictionary with dull path to file and its cells with group name
+    • d_cells - dictionary with full path to file and its cells with group name
 
     • res - list with dictionaries.
             view: [dict, dict, dict, ..., dict]
@@ -92,7 +90,6 @@ def pars_main(d_cells, json_dir):
     full_path = d_cells['full_path']
     cell_coordinate = d_cells['cells']
     course = d_cells['course']
-    print_line(f'Start parsing file {full_path}...')
     wb = openpyxl.load_workbook(full_path)
     sheet = wb.active
     for el in cell_coordinate:
@@ -179,7 +176,6 @@ def pars_main(d_cells, json_dir):
         count_nmb_weeks, count_weeks, count_lessons = 111, 11, 1
         try:
             xy = openpyxl.utils.coordinate_to_tuple(el)
-            print_line('Collecting data for ' + sheet[el].value + '... ')
             d['Group'] = sheet[el].value
             for row in sheet[
                        openpyxl.utils.get_column_letter(xy[1]) + str(xy[0] + 2):
@@ -196,11 +192,6 @@ def pars_main(d_cells, json_dir):
                     count_lessons = 1
             write_in_json(json_dir, d, course)
         except:
-            print_line(f'FAIL.\nSomething go wrong. Probably the problem in cell [{el}]', end='\n\n')
+            return False
         else:
-            print_line('SUCCESS.', end='\n\n')
-
-
-if __name__ == "__main__":
-    for d in pars_for_cells(path.join('..', 'schedule')):
-        print_line(pars_main(d, path.join('..', 'json')))
+            pass
