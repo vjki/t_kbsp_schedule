@@ -104,9 +104,7 @@ def c_print(message, border='white', end='\n\n'):
 # -- launching --
 ui.disp_greetings(version)
 schdeule = KbspSchedule()
-if schdeule.display_file_status():
-    c_print(
-        "[bold red]Fail.[/bold red] Something went wrong... (in ui.py)", border='red')
+schdeule.display_file_status()
 if schdeule.FIRST_TIME:
     c_print("[bold]Hello and welcome![/bold] Type |[bold green]> [/bold green]help| comand to see what i can.")
 
