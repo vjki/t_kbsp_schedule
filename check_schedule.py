@@ -6,14 +6,11 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 #
-import csv
 import re
 from datetime import datetime
-from core import ui
+from core.ui import c_print, disp_greetings
+from core.unicui import display_file_status
 from rich import print
-from rich.table import Table
-from rich.console import Console
-from rich.panel import Panel
 from kbsp_schedule import getting, parsing
 from os import path, mkdir, listdir
 
@@ -32,9 +29,7 @@ commands = {
 # -- class --
 class KbspSchedule:
     def __init__(self):
-        """Creating environment.
-
-        """
+        """Creating environment."""
         self.FIRST_TIME = True
         # Paths
         self.abs_path = path.abspath('.')
@@ -55,56 +50,32 @@ class KbspSchedule:
             self.com_check()
 
     def com_check(self):
-        """Update lmode.csv file.
-
-        """
+        """Update lmode.csv file."""
         return getting.check_schedule(self.schedule_dir)
 
     def com_udate(self):
-        """Downloading last version of files and pars them into jsons.
-
-        """
+        """Downloading last version of files and pars them into jsons."""
         if not getting.get_schedule(self.schedule_dir):
             return False
         for d in parsing.pars_for_cells(self.schedule_dir):
             parsing.pars_main(d, self.json_dir)
         return True
 
-    def display_file_status(self):
-        """Visualize data from lmod.csv.
-
-        """
-        table = Table(title="Schedule status")
-        table.add_column("Course", style="yellow", no_wrap=True)
-        table.add_column("File", style="cyan", no_wrap=True)
-        table.add_column("Last Modified", style="green", no_wrap=True)
-        table.add_column("Last Updated", style="magenta", no_wrap=True)
-
-        with open(path.join(self.schedule_dir, 'lmod.csv'), encoding='utf-8') as rf:
-            reader = csv.reader(rf, delimiter=',')
-            for row in reader:
-                table.add_row(row[0], row[1], row[2], row[3])
-
-        console = Console()
-        console.print(table)
-
     def schedule_by_group(self, group_name):
-        # TODO: Get json file by group name
-        self.pattern = re.compile(f".*{group_name}.*")
-        self.course = int(current_datetime.year) % 100 - int(group_name.split('-')[-1])
-        return self.pattern.findall(listdir(path.join(self.json_dir, str(self.course)).upper()))
-        
-
-
-# -- functions --
-def c_print(message, border='white', end='\n\n'):
-    print(Panel(message, border_style=border, expand=False), end=end)
+        """Get json file groups"""
+        self.course = int(current_datetime.year) % 100 - \
+            int(group_name.split('-')[-1])
+        for file in listdir(path.join(self.json_dir, str(self.course))):
+            if group_name == file.split()[0].upper():
+                self.file_name = file
+                break
+        return path.join(self.json_dir, str(self.course), self.file_name)
 
 
 # -- launching --
-ui.disp_greetings(version)
+disp_greetings(version)
 schdeule = KbspSchedule()
-schdeule.display_file_status()
+display_file_status(schdeule.schedule_dir)
 if schdeule.FIRST_TIME:
     c_print("[bold]Hello and welcome![/bold] Type |[bold green]> [/bold green]help| comand to see what i can.")
 
@@ -115,7 +86,8 @@ while True:
     if command == 'group':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
         print("[bold green]> [/bold green]", end='')
-        c_print(f"OUTPUT {schdeule.schedule_by_group(input().strip().upper())}")
+        c_print(
+            f"OUTPUT {schdeule.schedule_by_group(input().strip().upper())}")
 
     if command == 'update':
         if not schdeule.com_udate():
@@ -132,7 +104,7 @@ while True:
         else:
             c_print(
                 "[bold green]OK.[/bold green] New status of files will be displayed...", border='green')
-            schdeule.display_file_status()
+            display_file_status(schdeule.schedule_dir)
 
     if command == 'exit':
         c_print("[bold]Bye![/bold]")

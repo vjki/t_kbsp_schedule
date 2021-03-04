@@ -8,6 +8,9 @@
 #
 import os
 import rich
+import csv
+from rich import print as rprint
+from rich.panel import Panel
 from datetime import datetime
 
 
@@ -30,6 +33,5 @@ def disp_greetings(version):
     except:
         return False
 
-
-
-
+def c_print(message, border='white', end='\n\n'):
+    rprint(Panel(message, border_style=border, expand=False), end=end)
