@@ -18,9 +18,13 @@ from os import path, mkdir, listdir
 version = 'v1.0'
 current_datetime = datetime.now()
 commands = {
+    # TODO: Создать кнопки:
+    # [...]         "Сегодня" - расписание на текущий день недели для определеннной группы.
+    # [...]         "Группа" - полное расписание для определенной группы.
+    # [...]         "Файл" - скчаивается файл(ы) конкретного курса.
+    # [DONE]        "Обновление" - обновления файлов с раписанием + lmod.csv (в чатах релизовать по расписанию).
     'group': 'Get schedule of current group.',
-    'update': 'Update all schedules files. To check int go [home folder]/schedule.',
-    'check': 'Get time last modified and update schedule.',
+    'update': 'Update all schedules files and file status.',
     'help': 'Get list of all commands.',
     'exit': 'Exit program.'
 }
@@ -47,11 +51,6 @@ class KbspSchedule:
             f = open(path.join(self.schedule_dir, 'lmod.csv'), 'w')
             f.close()
             self.com_udate()
-            self.com_check()
-
-    def com_check(self):
-        """Update lmode.csv file."""
-        return getting.check_schedule(self.schedule_dir)
 
     def com_udate(self):
         """Downloading last version of files and pars them into jsons."""
@@ -59,6 +58,8 @@ class KbspSchedule:
             return False
         for d in parsing.pars_for_cells(self.schedule_dir):
             parsing.pars_main(d, self.json_dir)
+        if not getting.check_schedule(self.schedule_dir):
+            return False
         return True
 
     def schedule_by_group(self, group_name):
@@ -77,7 +78,7 @@ disp_greetings(version)
 schdeule = KbspSchedule()
 display_file_status(schdeule.schedule_dir)
 if schdeule.FIRST_TIME:
-    c_print("[bold]Hello and welcome![/bold] Type |[bold green]> [/bold green]help| comand to see what i can.")
+    c_print("[bold]Hello and welcome![/bold] Type [bold green]> [/bold green]help comand to see what i can.")
 
 while True:
     print("[bold green]> [/bold green]", end='')
@@ -95,20 +96,8 @@ while True:
                 "[bold red]Fail.[/bold red] Something went wrong... ", border='red')
         else:
             c_print(
-                "[bold green]OK.[/bold green] New schedules was up to date. Type |[bold green]> [/bold green]group| to see the current group schedule.", border="green")
-
-    if command == 'check':
-        if not schdeule.com_check():
-            c_print(
-                "[bold red]Fail.[/bold red] Something went wrong... (in getting.py)", border='red')
-        else:
-            c_print(
-                "[bold green]OK.[/bold green] New status of files will be displayed...", border='green')
+                "[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
             display_file_status(schdeule.schedule_dir)
-
-    if command == 'exit':
-        c_print("[bold]Bye![/bold]")
-        break
 
     if command == 'help':
         res = []
@@ -116,6 +105,10 @@ while True:
             res.append(f"[bold]{k}[/bold] - {v}")
         c_print('\n'.join(res))
 
+    if command == 'exit':
+        c_print("[bold]Bye![/bold]")
+        break
+
     if command not in commands:
         c_print(
-            f'I don not know |[bold green]> [/bold green]{command}| command :( Type [bold]help[/bold] for commands list')
+            f'I don not know [bold green]> [/bold green]{command} command :( Type [bold]help[/bold] for commands list')
