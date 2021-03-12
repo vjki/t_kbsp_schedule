@@ -7,6 +7,7 @@
 #
 #
 import csv
+import json
 from os.path import join
 from rich.table import Table
 from rich.console import Console
@@ -24,5 +25,79 @@ def display_file_status(schedule_dir):
         for row in reader:
             table.add_row(row[0], row[1], row[2], row[3])
 
+    console = Console()
+    console.print(table)
+
+
+def display_full_group_schedule(json_file_path, group_name):
+    """Visualize schedule in readable form for current group."""
+    # TODO: Needs refactoring
+    codes = {
+        1: '1 пара – 9:00-10:30',
+        2: '2 пара – 10:40-12:10',
+        3: '3 пара – 12:40-14:10',
+        4: '4 пара – 14:20-15:50',
+        5: '5 пара – 16:20-17:50',
+        6: '6 пара – 18:00-19:30',
+        11: 'Понедельник',
+        12: 'Вторник',
+        13: 'Среда',
+        14: 'Четверг',
+        15: 'Пятница',
+        16: 'Суббота',
+        111: 'Нечетная неделя',
+        112: 'Четная неделя'
+    }
+
+    table = Table(title=f"{group_name} Нечетная неделя")
+    table.add_column("День недели", style="yellow", no_wrap=True)
+    table.add_column("№ Пары и время", style="cyan", no_wrap=True)
+
+    table.add_column("Предмет", style="magenta", no_wrap=True)
+    table.add_column("Тип", style="green", no_wrap=True)
+    table.add_column("Преподаватель", style="green", no_wrap=True)
+    table.add_column("Аудитория", style="magenta", no_wrap=True)
+
+    with open(json_file_path, 'r', encoding='utf-8') as rf:
+        data = json.loads(rf.read())
+        for week in range(11, 17):
+            for lesson in range(1, 7):
+                table.add_row(
+                    codes[week], 
+                    codes[lesson],  
+                    str(data[str(week)][str(lesson)]["111"][0]),
+                    str(data[str(week)][str(lesson)]["111"][1]),
+                    str(data[str(week)][str(lesson)]["111"][2]),
+                    str(data[str(week)][str(lesson)]["111"][3]))
+                table.add_row(" ", " ", " ", " ", " ", " ")
+            table.add_row("~~~\n", "~~~\n", "~~~\n", "~~~\n", "~~~\n", "~~~\n")
+    
+    console = Console()
+    console.print(table)
+
+
+    table = Table(title=f"{group_name} Четная неделя")
+    table.add_column("День недели", style="yellow", no_wrap=True)
+    table.add_column("№ Пары и время", style="cyan", no_wrap=True)
+
+    table.add_column("Предмет", style="magenta", no_wrap=True)
+    table.add_column("Тип", style="green", no_wrap=True)
+    table.add_column("Преподаватель", style="green", no_wrap=True)
+    table.add_column("Аудитория", style="magenta", no_wrap=True)
+
+    with open(json_file_path, 'r', encoding='utf-8') as rf:
+        data = json.loads(rf.read())
+        for week in range(11, 17):
+            for lesson in range(1, 7):
+                table.add_row(
+                    codes[week], 
+                    codes[lesson],  
+                    str(data[str(week)][str(lesson)]["112"][0]),
+                    str(data[str(week)][str(lesson)]["112"][1]),
+                    str(data[str(week)][str(lesson)]["112"][2]),
+                    str(data[str(week)][str(lesson)]["112"][3]))
+                table.add_row(" ", " ", " ", " ", " ", " ")
+            table.add_row("~~~\n", "~~~\n", "~~~\n", "~~~\n", "~~~\n", "~~~\n")
+    
     console = Console()
     console.print(table)

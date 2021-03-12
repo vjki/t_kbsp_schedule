@@ -9,7 +9,7 @@
 import re
 from datetime import datetime
 from core.ui import c_print, disp_greetings
-from core.unicui import display_file_status
+from core.unicui import display_file_status, display_full_group_schedule
 from rich import print
 from kbsp_schedule import getting, parsing
 from os import path, mkdir, listdir
@@ -70,7 +70,8 @@ class KbspSchedule:
             if group_name == file.split()[0].upper():
                 self.file_name = file
                 break
-        return path.join(self.json_dir, str(self.course), self.file_name)
+        display_full_group_schedule(
+            path.join(self.json_dir, str(self.course), self.file_name), group_name)
 
 
 # -- launching --
@@ -87,8 +88,10 @@ while True:
     if command == 'group':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
         print("[bold green]> [/bold green]", end='')
+        group_name = input().strip().upper()
         c_print(
-            f"OUTPUT {schdeule.schedule_by_group(input().strip().upper())}")
+            f"[bold green]OK.[/bold green] Schedule for {group_name} will be displayed...", border="green")
+        schdeule.schedule_by_group(group_name)
 
     if command == 'update':
         if not schdeule.com_udate():
