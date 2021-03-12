@@ -181,7 +181,10 @@ def pars_main(d_cells, json_dir):
                        openpyxl.utils.get_column_letter(xy[1]) + str(xy[0] + 2):
                        openpyxl.utils.get_column_letter(xy[1] + 3) + str(xy[0] + 73)]:
                 for cell in row:
-                    d[count_weeks][count_lessons][count_nmb_weeks].append(cell.value)
+                    if cell.value == None:
+                        d[count_weeks][count_lessons][count_nmb_weeks].append('-')
+                    else:
+                         d[count_weeks][count_lessons][count_nmb_weeks].append(cell.value)
                 if count_nmb_weeks == 111:
                     count_nmb_weeks += 1
                 else:
