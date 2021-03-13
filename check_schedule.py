@@ -9,7 +9,7 @@
 import re
 from datetime import datetime
 from core.ui import c_print, disp_greetings
-from core.unicui import display_file_status, display_full_group_schedule, display_today_group_schedule
+from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
 from rich import print
 from kbsp_schedule import getting, parsing
 from os import path, mkdir, listdir
@@ -79,7 +79,7 @@ class KbspSchedule:
         """Get schedule for today from json"""
         try:
             self.file_name = self.get_file_name_by_group(group_name)
-            display_today_group_schedule(
+            display_dx_group_schedule(
                 path.join(self.json_dir, str(self.course), self.file_name), group_name)
             return True
         except:
@@ -89,7 +89,7 @@ class KbspSchedule:
         """Get schedule for today from json"""
         try:
             self.file_name = self.get_file_name_by_group(group_name)
-            display_today_group_schedule(
+            display_dx_group_schedule(
                 path.join(self.json_dir, str(self.course), self.file_name), group_name, dx=1)
             return True
         except:

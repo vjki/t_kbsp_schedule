@@ -46,65 +46,48 @@ def display_full_group_schedule(json_file_path, group_name):
         13: 'Среда',
         14: 'Четверг',
         15: 'Пятница',
-        16: 'Суббота',
-        111: 'Нечетная неделя',
-        112: 'Четная неделя'
+        16: 'Суббота'
+        # 111: 'Нечетная неделя',
+        # 112: 'Четная неделя'
     }
 
-    table = Table(title=f"{group_name} Нечетная неделя")
-    table.add_column("День недели", style="yellow", no_wrap=True)
-    table.add_column("Пары и время", style="cyan", no_wrap=True)
+    def dfgs_odd_even(odd: bool):
+        title_week, oe = 'Четная', '112'
+        if odd:
+            title_week = 'Нечетная'
+            oe = '111'
+        table = Table(title=f"{group_name} {title_week} неделя")
+        table.add_column("День недели", style="yellow", no_wrap=True)
+        table.add_column("Пары и время", style="cyan", no_wrap=True)
 
-    table.add_column("Предмет", style="magenta", no_wrap=True)
-    table.add_column("Тип", style="green", no_wrap=True)
-    table.add_column("Преподаватель", style="green", no_wrap=True)
-    table.add_column("Аудитория", style="magenta", no_wrap=True)
+        table.add_column("Предмет", style="magenta", no_wrap=True)
+        table.add_column("Тип", style="green", no_wrap=True)
+        table.add_column("Преподаватель", style="green", no_wrap=True)
+        table.add_column("Аудитория", style="magenta", no_wrap=True)
 
-    with open(json_file_path, 'r', encoding='utf-8') as rf:
-        data = json.loads(rf.read())
-        for week in range(11, 17):
-            for lesson in range(1, 7):
-                table.add_row(
-                    codes[week],
-                    codes[lesson],
-                    str(data[str(week)][str(lesson)]["111"][0]),
-                    str(data[str(week)][str(lesson)]["111"][1]),
-                    str(data[str(week)][str(lesson)]["111"][2]),
-                    str(data[str(week)][str(lesson)]["111"][3]))
-                table.add_row(" ", " ", " ", " ", " ", " ")
-            table.add_row("###\n", "###\n", "###\n", "###\n", "###\n", "###\n")
+        with open(json_file_path, 'r', encoding='utf-8') as rf:
+            data = json.loads(rf.read())
+            for week in range(11, 17):
+                for lesson in range(1, 7):
+                    table.add_row(
+                        codes[week],
+                        codes[lesson],
+                        str(data[str(week)][str(lesson)][oe][0]),
+                        str(data[str(week)][str(lesson)][oe][1]),
+                        str(data[str(week)][str(lesson)][oe][2]),
+                        str(data[str(week)][str(lesson)][oe][3]))
+                    table.add_row(" ", " ", " ", " ", " ", " ")
+                table.add_row("###\n", "###\n", "###\n", "###\n", "###\n", "###\n")
 
-    console = Console()
-    console.print(table)
-
-    table = Table(title=f"{group_name} Четная неделя")
-    table.add_column("День недели", style="yellow", no_wrap=True)
-    table.add_column("Пары и время", style="cyan", no_wrap=True)
-
-    table.add_column("Предмет", style="magenta", no_wrap=True)
-    table.add_column("Тип", style="green", no_wrap=True)
-    table.add_column("Преподаватель", style="green", no_wrap=True)
-    table.add_column("Аудитория", style="magenta", no_wrap=True)
-
-    with open(json_file_path, 'r', encoding='utf-8') as rf:
-        data = json.loads(rf.read())
-        for week in range(11, 17):
-            for lesson in range(1, 7):
-                table.add_row(
-                    codes[week],
-                    codes[lesson],
-                    str(data[str(week)][str(lesson)]["112"][0]),
-                    str(data[str(week)][str(lesson)]["112"][1]),
-                    str(data[str(week)][str(lesson)]["112"][2]),
-                    str(data[str(week)][str(lesson)]["112"][3]))
-                table.add_row(" ", " ", " ", " ", " ", " ")
-            table.add_row("###\n", "###\n", "###\n", "###\n", "###\n", "###\n")
-
-    console = Console()
-    console.print(table)
+        console = Console()
+        console.print(table)
+    
+    dfgs_odd_even(True)
+    dfgs_odd_even(False)
 
 
-def display_today_group_schedule(json_file_path: str, group_name: str, dx=0):
+
+def display_dx_group_schedule(json_file_path: str, group_name: str, dx=0):
     """Visualize todays schedule in readable form for current group."""
     codes = {
         1: '1 пара – 9:00-10:30',
@@ -120,51 +103,38 @@ def display_today_group_schedule(json_file_path: str, group_name: str, dx=0):
         15: 'Пятница',
         16: 'Суббота',
     }
+
+    def ddgs_odd_even(odd: bool):
+        title_week, oe = 'Четная', '112'
+        if odd:
+            title_week = 'Нечетная'
+            oe = '111'
+        table = Table(title=f"{codes[week]} - {group_name} {title_week} неделя")
+        table.add_column("Пары и время", style="cyan", no_wrap=True)
+
+        table.add_column("Предмет", style="magenta", no_wrap=True)
+        table.add_column("Тип", style="green", no_wrap=True)
+        table.add_column("Преподаватель", style="green", no_wrap=True)
+        table.add_column("Аудитория", style="magenta", no_wrap=True)
+
+        with open(json_file_path, 'r', encoding='utf-8') as rf:
+            data = json.loads(rf.read())
+            for lesson in range(1, 7):
+                table.add_row(
+                    codes[lesson],
+                    str(data[str(week)][str(lesson)][oe][0]),
+                    str(data[str(week)][str(lesson)][oe][1]),
+                    str(data[str(week)][str(lesson)][oe][2]),
+                    str(data[str(week)][str(lesson)][oe][3]))
+                table.add_row(" ", " ", " ", " ", " ", " ")
+
+        console = Console()
+        console.print(table)
+
     week = 11 + datetime.today().weekday() + dx
     if week > 16:
         console = Console()
         console.print("Воскресенье - Weekend!")
     else:
-        table = Table(title=f"{codes[week]} - {group_name} Нечетная неделя")
-        table.add_column("Пары и время", style="cyan", no_wrap=True)
-
-        table.add_column("Предмет", style="magenta", no_wrap=True)
-        table.add_column("Тип", style="green", no_wrap=True)
-        table.add_column("Преподаватель", style="green", no_wrap=True)
-        table.add_column("Аудитория", style="magenta", no_wrap=True)
-
-        with open(json_file_path, 'r', encoding='utf-8') as rf:
-            data = json.loads(rf.read())
-            for lesson in range(1, 7):
-                table.add_row(
-                    codes[lesson],
-                    str(data[str(week)][str(lesson)]["111"][0]),
-                    str(data[str(week)][str(lesson)]["111"][1]),
-                    str(data[str(week)][str(lesson)]["111"][2]),
-                    str(data[str(week)][str(lesson)]["111"][3]))
-                table.add_row(" ", " ", " ", " ", " ", " ")
-
-        console = Console()
-        console.print(table)
-
-        table = Table(title=f"{codes[week]} - {group_name} Четная неделя")
-        table.add_column("Пары и время", style="cyan", no_wrap=True)
-
-        table.add_column("Предмет", style="magenta", no_wrap=True)
-        table.add_column("Тип", style="green", no_wrap=True)
-        table.add_column("Преподаватель", style="green", no_wrap=True)
-        table.add_column("Аудитория", style="magenta", no_wrap=True)
-
-        with open(json_file_path, 'r', encoding='utf-8') as rf:
-            data = json.loads(rf.read())
-            for lesson in range(1, 7):
-                table.add_row(
-                    codes[lesson],
-                    data[str(week)][str(lesson)]["112"][0],
-                    data[str(week)][str(lesson)]["112"][1],
-                    data[str(week)][str(lesson)]["112"][2],
-                    data[str(week)][str(lesson)]["112"][3])
-                table.add_row(" ", " ", " ", " ", " ", " ")
-
-        console = Console()
-        console.print(table)
+        ddgs_odd_even(True)
+        ddgs_odd_even(False)
