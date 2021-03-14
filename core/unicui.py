@@ -104,7 +104,7 @@ def display_dx_group_schedule(json_file_path: str, group_name: str, dx=0):
         16: 'Суббота',
     }
 
-    def ddgs_odd_even(odd: bool):
+    def ddgs_odd_even(odd: bool, week: int):
         title_week, oe = 'Четная', '112'
         if odd:
             title_week = 'Нечетная'
@@ -131,10 +131,10 @@ def display_dx_group_schedule(json_file_path: str, group_name: str, dx=0):
         console = Console()
         console.print(table)
 
-    week = 11 + datetime.today().weekday() + dx
+    week = 11 + (datetime.today().weekday() + dx) % 7
     if week > 16:
         console = Console()
         console.print("Воскресенье - Weekend!")
     else:
-        ddgs_odd_even(True)
-        ddgs_odd_even(False)
+        ddgs_odd_even(True, week)
+        ddgs_odd_even(False, week)
