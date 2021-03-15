@@ -10,6 +10,7 @@ import openpyxl
 import json 
 from os import path, listdir
 
+# TODO: FILE Needs refactoring
 
 # --- Functions ---
 def write_in_json(json_dir, schedule_d, course):
@@ -41,7 +42,7 @@ def pars_for_cells(schedule_dir):
         for file_name in listdir(current_dir):
             full_path = path.join(current_dir, file_name)
             d = {'full_path': full_path, 'course': sub_dir, 'cells': []}
-            wb = openpyxl.load_workbook(full_path)
+            wb = openpyxl.load_workbook(full_path, read_only=True)
             sheet = wb.active
             for row in sheet.iter_rows(2):
                 for cell in row:
@@ -90,7 +91,7 @@ def pars_main(d_cells, json_dir):
     full_path = d_cells['full_path']
     cell_coordinate = d_cells['cells']
     course = d_cells['course']
-    wb = openpyxl.load_workbook(full_path)
+    wb = openpyxl.load_workbook(full_path, read_only=True)
     sheet = wb.active
     for el in cell_coordinate:
         d = {'Group': None,

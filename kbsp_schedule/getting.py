@@ -10,17 +10,20 @@ import re
 import requests
 import csv
 import time
+
 from openpyxl import load_workbook
 from bs4 import BeautifulSoup
 from os import path, listdir, remove
 from datetime import datetime
 
-# --- Globals ---
+# TODO: FILE Needs refactoring
+
+# --- globals ---
 url = 'https://www.mirea.ru/schedule/'
 
 
-# --- Function ---
-def check_schedule(schedule_dir):
+# --- function ---
+def check_schedule(schedule_dir: str) -> bool:
     """Write in lmod.csv.
     Check last modified and last update of all files and write it into lmod.csv.
         view(lmod.csv): (course),(file name),(last modified),(last update)
@@ -34,7 +37,7 @@ def check_schedule(schedule_dir):
         for sub_dir in range(1, 6):
             current_dir = path.join(schedule_dir, str(sub_dir))
             for file_name in listdir(current_dir):
-                wb = load_workbook(path.join(current_dir, file_name))
+                wb = load_workbook(path.join(current_dir, file_name), read_only=True)
                 last_modified = wb.properties.modified
                 with open(path.join(schedule_dir, 'lmod.csv'), 'a', encoding='utf-8') as f:
                     file_writer = csv.writer(f, lineterminator="\r")
@@ -43,7 +46,7 @@ def check_schedule(schedule_dir):
                     file_writer.writerow(
                         [sub_dir, file_name, last_modified, last_update])
         return True
-    except OSError as e:
+    except OSError:
         return False
 
 

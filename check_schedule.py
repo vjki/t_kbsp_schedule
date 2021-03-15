@@ -7,6 +7,7 @@
 #
 #
 import re
+
 from datetime import datetime
 from core.ui import c_print, disp_greetings
 from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
@@ -18,16 +19,11 @@ from os import path, mkdir, listdir
 version = 'v1.0'
 current_datetime = datetime.now()
 commands = {
-    # TODO: Создать кнопки:
-    # [DONE]            "Сегодня" - расписание на текущий день недели для определеннной группы.
-    # [...]             "Завтра" - тоже самое, что и "Сегодня", но на день вперед.
-    # [DONE]            "Группа" - полное расписание для определенной группы.
-    # [NO TERMINAL]     "Файл" - скчаивается(ются) файл(ы) конкретного курса.
-    # [DONE]            "Обновление" - обновления файлов с раписанием + lmod.csv (в чатах релизовать по расписанию).
     'group': 'Get schedule of current group.',
     'today': 'Get todays schedule of the week.',
     'tomorrow': 'Get tomorrow schedule of the week.',
     'update': 'Update all schedules files and file status.',
+    'view': 'Check a the file status',
     'help': 'Get list of all commands.',
     'exit': 'Exit program.'
 }
@@ -57,12 +53,11 @@ class KbspSchedule:
 
     def com_udate(self):
         """Downloading last version of files and pars them into jsons."""
-        if not getting.get_schedule(self.schedule_dir):
-            return False
+        assert getting.get_schedule(
+            self.schedule_dir), "Cannot download the files"
         for d in parsing.pars_for_cells(self.schedule_dir):
             parsing.pars_main(d, self.json_dir)
-        if not getting.check_schedule(self.schedule_dir):
-            return False
+        getting.check_schedule(self.schedule_dir)
         return True
 
     def com_group(self, group_name: str):
@@ -95,6 +90,9 @@ class KbspSchedule:
         except:
             return False
 
+    def com_view(self):
+        display_file_status(schdeule.schedule_dir)
+
     # TECHNICAL TOOLS
 
     def get_file_name_by_group(self, group_name: str) -> str:
@@ -123,7 +121,6 @@ while True:
         if not schdeule.com_group(group_name):
             c_print(
                 f"[bold red]Fail.[/bold red] Can not find the {group_name} group... ", border='red')
-        
 
     if command == 'today':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
@@ -149,6 +146,9 @@ while True:
             c_print(
                 "[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
             display_file_status(schdeule.schedule_dir)
+
+    if command == 'view':
+        schdeule.com_view()
 
     if command == 'help':
         res = []
