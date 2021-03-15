@@ -45,6 +45,7 @@ def check_schedule(schedule_dir: str) -> bool:
                     last_update = datetime.fromtimestamp(t)
                     file_writer.writerow(
                         [sub_dir, file_name, last_modified, last_update])
+        wb.close()
         return True
     except OSError:
         return False

@@ -53,8 +53,17 @@ class KbspSchedule:
 
     def com_udate(self):
         """Downloading last version of files and pars them into jsons."""
+        # TODO: Необходимо сделать "умное" обновление. 
+        # Скачивание файлов во временное хранилище и сравнение 
+        # их последней даты изменения с той, что хранится в lmod. 
+        # Если даты на файлах различаются -> 
+        #       обновляем этот файл в основном хранилище;
+        #       обновляем все jsonы тех групп, которые были в файлах;
+        #       выводим сообщения об обновленных файлах.
+        # Иначе ->
+        #       выводим сообщение о том, что все файлы свежие.
         assert getting.get_schedule(
-            self.schedule_dir), "Cannot download the files"
+            self.schedule_dir), "Cannot download the files..."
         for d in parsing.pars_for_cells(self.schedule_dir):
             parsing.pars_main(d, self.json_dir)
         getting.check_schedule(self.schedule_dir)
