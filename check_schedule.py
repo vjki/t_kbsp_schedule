@@ -8,12 +8,13 @@
 #
 import re
 
-from datetime import datetime
-from core.ui import c_print, disp_greetings
-from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
 from rich import print
-from kbsp_schedule import getting, parsing
+from datetime import datetime
 from os import path, mkdir, listdir
+from kbsp_schedule import getting, parsing
+from core.ui import c_print, disp_greetings, user_input
+from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
+
 
 # -- globals --
 version = 'v1.0'
@@ -22,7 +23,7 @@ commands = {
     'group': 'Get schedule of current group.',
     'today': 'Get todays schedule of the week.',
     'tomorrow': 'Get tomorrow schedule of the week.',
-    'update': 'Update all schedules files and file status.',
+    'get': 'Get all schedules files and file status from internet.',
     'view': 'Check a the file status',
     'help': 'Get list of all commands.',
     'exit': 'Exit program.'
@@ -41,75 +42,68 @@ class KbspSchedule:
         try:
             mkdir('schedule')
             mkdir('json')
-            for subdir in range(1, 6):
-                mkdir(path.join(self.schedule_dir, str(subdir)))
-                mkdir(path.join(self.json_dir, str(subdir)))
+            for sub_dir in range(1, 6):
+                mkdir(path.join(self.schedule_dir, str(sub_dir)))
+                mkdir(path.join(self.json_dir, str(sub_dir)))
         except FileExistsError:
             self.FIRST_TIME = False
+
         if self.FIRST_TIME:
             f = open(path.join(self.schedule_dir, 'lmod.csv'), 'w')
             f.close()
-            self.com_udate()
+            self.com_get()
 
-    def com_udate(self):
+    def com_get(self):
         """Downloading last version of files and pars them into jsons."""
-        # TODO: Необходимо сделать "умное" обновление. 
-        # Скачивание файлов во временное хранилище и сравнение 
-        # их последней даты изменения с той, что хранится в lmod. 
-        # Если даты на файлах различаются -> 
-        #       обновляем этот файл в основном хранилище;
-        #       обновляем все jsonы тех групп, которые были в файлах;
-        #       выводим сообщения об обновленных файлах.
-        # Иначе ->
-        #       выводим сообщение о том, что все файлы свежие.
         assert getting.get_schedule(
             self.schedule_dir), "Cannot download the files..."
         for d in parsing.pars_for_cells(self.schedule_dir):
             parsing.pars_main(d, self.json_dir)
         getting.check_schedule(self.schedule_dir)
-        return True
+
+    def com_upd(self):
+        # TODO: Необходимо сделать "умное" обновление.
+        # Скачивание файлов во временное хранилище и сравнение
+        # их последней даты изменения с той, что хранится в lmod.
+        # Если даты на файлах различаются ->
+        #       обновляем этот файл в основном хранилище;
+        #       обновляем все jsonы тех групп, которые были в файлах;
+        #       выводим сообщения об обновленных файлах.
+        # Иначе ->
+        #       выводим сообщение о том, что все файлы свежие.
+        pass
 
     def com_group(self, group_name: str):
         """Get json file groups"""
-        try:
-            self.file_name = self.get_file_name_by_group(group_name)
-            display_full_group_schedule(
-                path.join(self.json_dir, str(self.course), self.file_name), group_name)
-            return True
-        except:
-            return False
+        self.file_name, self.course = self.get_file_name_by_group(group_name)
+        self.path_to_file = path.join(
+            self.json_dir, str(self.course), self.file_name)
 
-    def com_today(self, group_name: str):
-        """Get schedule for today from json"""
-        try:
-            self.file_name = self.get_file_name_by_group(group_name)
-            display_dx_group_schedule(
-                path.join(self.json_dir, str(self.course), self.file_name), group_name)
-            return True
-        except:
-            return False
+        assert display_full_group_schedule(
+            self.path_to_file, group_name), "Cannot display full group schedule..."
 
-    def com_tomorrow(self, group_name: str):
-        """Get schedule for today from json"""
-        try:
-            self.file_name = self.get_file_name_by_group(group_name)
-            display_dx_group_schedule(
-                path.join(self.json_dir, str(self.course), self.file_name), group_name, dx=1)
-            return True
-        except:
-            return False
+    def com_tt(self, group_name: str, dx=0):
+        """Display schdule for today + dx & for current group"""
+        self.file_name, self.course = self.get_file_name_by_group(group_name)
+        self.path_to_file = path.join(
+            self.json_dir, str(self.course), self.file_name)
+
+        assert display_dx_group_schedule(
+            self.path_to_file, group_name, dx=dx), "Cannot display schedule for group..."
 
     def com_view(self):
-        display_file_status(schdeule.schedule_dir)
+        """Display lmod.csv"""
+        assert display_file_status(
+            schdeule.schedule_dir), "Cannot display the file status..."
 
     # TECHNICAL TOOLS
 
-    def get_file_name_by_group(self, group_name: str) -> str:
-        self.course = int(current_datetime.year) % 100 - \
+    def get_file_name_by_group(self, group_name: str):
+        course = int(current_datetime.year) % 100 - \
             int(group_name.split('-')[-1])
-        for file in listdir(path.join(self.json_dir, str(self.course))):
-            if group_name == file.split()[0].upper():
-                return file
+        for myfile in listdir(path.join(self.json_dir, str(course))):
+            if group_name.upper() == myfile.split()[0].upper():
+                return myfile, course
 
 
 # -- launching --
@@ -120,41 +114,39 @@ if schdeule.FIRST_TIME:
     c_print("[bold]Hello and welcome![/bold] Type [bold green]> [/bold green]help comand to see what i can.")
 
 while True:
-    print("[bold green]> [/bold green]", end='')
-    command = input().strip().lower()
+    command = user_input()
 
     if command == 'group':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
-        print("[bold green]> [/bold green]", end='')
-        group_name = input().strip().upper()
-        if not schdeule.com_group(group_name):
-            c_print(
-                f"[bold red]Fail.[/bold red] Can not find the {group_name} group... ", border='red')
+        group_name = user_input()
+        try:
+            schdeule.com_group(group_name)
+        except AssertionError as e:
+            c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 
     if command == 'today':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
-        print("[bold green]> [/bold green]", end='')
-        group_name = input().strip().upper()
-        if not schdeule.com_today(group_name):
-            c_print(
-                f"[bold red]Fail.[/bold red] Can not find the {group_name} group... ", border='red')
+        group_name = user_input()
+        try:
+            schdeule.com_tt(group_name)
+        except AssertionError as e:
+            c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 
     if command == 'tomorrow':
         c_print("Please enter the name of youre group (example: БИСО-02-16)")
-        print("[bold green]> [/bold green]", end='')
-        group_name = input().strip().upper()
-        if not schdeule.com_tomorrow(group_name):
-            c_print(
-                f"[bold red]Fail.[/bold red] Can not find the {group_name} group... ", border='red')
+        group_name = user_input()
+        try:
+            schdeule.com_tt(group_name, dx=1)
+        except AssertionError as e:
+            c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 
-    if command == 'update':
-        if not schdeule.com_udate():
-            c_print(
-                "[bold red]Fail.[/bold red] Something went wrong... ", border='red')
-        else:
-            c_print(
-                "[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
+    if command == 'get':
+        try:
+            schdeule.com_get()
+            c_print("[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
             display_file_status(schdeule.schedule_dir)
+        except AssertionError as e:
+            c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 
     if command == 'view':
         schdeule.com_view()

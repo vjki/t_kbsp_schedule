@@ -9,6 +9,7 @@
 import os
 import rich
 import csv
+
 from rich import print as rprint
 from rich.panel import Panel
 from datetime import datetime
@@ -35,3 +36,7 @@ def disp_greetings(version):
 
 def c_print(message, border='white', end='\n\n'):
     rprint(Panel(message, border_style=border, expand=False), end=end)
+
+def user_input():
+    rprint("[bold green]> [/bold green]", end='')
+    return input().strip().lower()

@@ -30,6 +30,8 @@ def display_file_status(schedule_dir):
     console = Console()
     console.print(table)
 
+    return True
+
 
 def display_full_group_schedule(json_file_path, group_name):
     """Visualize schedule in readable form for current group."""
@@ -85,6 +87,8 @@ def display_full_group_schedule(json_file_path, group_name):
     dfgs_odd_even(True)
     dfgs_odd_even(False)
 
+    return True
+
 
 
 def display_dx_group_schedule(json_file_path: str, group_name: str, dx=0):
@@ -138,3 +142,5 @@ def display_dx_group_schedule(json_file_path: str, group_name: str, dx=0):
     else:
         ddgs_odd_even(True, week)
         ddgs_odd_even(False, week)
+
+    return True
