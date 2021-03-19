@@ -7,16 +7,15 @@
 #
 #
 import re
-import requests
 import csv
 import time
+import requests
 
-from openpyxl import load_workbook
 from bs4 import BeautifulSoup
-from os import path, listdir, remove
 from datetime import datetime
+from openpyxl import load_workbook
+from os import path, listdir, remove
 
-# TODO: FILE Needs refactoring
 
 # --- globals ---
 url = 'https://www.mirea.ru/schedule/'
@@ -31,27 +30,25 @@ def check_schedule(schedule_dir: str) -> bool:
     • schedule_dir - string which contain way to schedule dir
 
     """
-    # TODO: Understand why this fuction working so long time
     try:
         remove(path.join(schedule_dir, 'lmod.csv'))
         for sub_dir in range(1, 6):
             current_dir = path.join(schedule_dir, str(sub_dir))
             for file_name in listdir(current_dir):
-                wb = load_workbook(path.join(current_dir, file_name), read_only=True)
+                full_path = path.join(current_dir, file_name)
+                wb = load_workbook(full_path, read_only=True)
                 last_modified = wb.properties.modified
+                last_update = datetime.fromtimestamp(path.getmtime(full_path))
                 with open(path.join(schedule_dir, 'lmod.csv'), 'a', encoding='utf-8') as f:
                     file_writer = csv.writer(f, lineterminator="\r")
-                    t = path.getmtime(path.join(current_dir, file_name))
-                    last_update = datetime.fromtimestamp(t)
-                    file_writer.writerow(
-                        [sub_dir, file_name, last_modified, last_update])
+                    file_writer.writerow([sub_dir, file_name, last_modified, last_update])
         wb.close()
         return True
-    except OSError:
+    except:
         return False
 
 
-def get_schedule(schedule_dir):
+def get_schedule(schedule_dir: str) -> bool:
     """Downloading schedules.
     Download kbsp schedules from site mirea and put them into
     directories.
@@ -72,4 +69,3 @@ def get_schedule(schedule_dir):
         return True
     except:
         return False
-

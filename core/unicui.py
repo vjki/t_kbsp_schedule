@@ -8,9 +8,10 @@
 #
 import csv
 import json
-from datetime import datetime
+
 from os.path import join
 from rich.table import Table
+from datetime import datetime
 from rich.console import Console
 
 
@@ -35,7 +36,6 @@ def display_file_status(schedule_dir):
 
 def display_full_group_schedule(json_file_path, group_name):
     """Visualize schedule in readable form for current group."""
-    # TODO: Needs refactoring
     codes = {
         1: '1 пара – 9:00-10:30',
         2: '2 пара – 10:40-12:10',
