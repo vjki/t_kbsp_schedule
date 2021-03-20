@@ -101,7 +101,7 @@ def pars_main(d_cells: dict, json_dir: str) -> bool:
     wb = openpyxl.load_workbook(full_path, read_only=True)
     sheet = wb.active
     for el in cell_coordinate:
-        d = {x: {x: {}.fromkeys(range(111, 113), []) for x in range(1, 7)} for x in range(11, 17)}
+        d = {x: {x: {111: [], 112: []} for x in range(1, 7)} for x in range(11, 17)}
         d.update({'Group': None})
         count_nmb_weeks, count_weeks, count_lessons = 111, 11, 1
         d['Group'] = sheet[el].value
@@ -113,12 +113,7 @@ def pars_main(d_cells: dict, json_dir: str) -> bool:
             for row in sheet[up : down]:
                 for cell in row:
                     val = cell.value
-                    # TODO: ЗАПИСЫВАЕТ ОДНОВРЕМЕННО НА ЧЕТНУЮ И НЕЧЕТНУЮ НЕДЕЛИ. ИСПРАВИТЬ!!!
                     d[count_weeks][count_lessons][count_nmb_weeks].append(val if val is not None else '-')
-                    # if cell.value is None:
-                    #     d[count_weeks][count_lessons][count_nmb_weeks].append('-')
-                    # else:
-                    #     d[count_weeks][count_lessons][count_nmb_weeks].append(cell.value)
                 if count_nmb_weeks == 111:
                     count_nmb_weeks += 1
                 else:
