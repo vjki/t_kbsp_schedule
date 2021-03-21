@@ -19,7 +19,7 @@ def display_file_status(schedule_dir):
     """Visualize data from lmod.csv."""
     table = Table(title="Schedule status")
     table.add_column("Course", style="yellow", no_wrap=True)
-    table.add_column("File", style="cyan", no_wrap=True)
+    table.add_column("Link", style="cyan", no_wrap=True)
     table.add_column("Last Modified", style="green", no_wrap=True)
     table.add_column("Last Updated", style="magenta", no_wrap=True)
 

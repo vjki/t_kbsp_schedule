@@ -14,11 +14,13 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from openpyxl import load_workbook
+from core.utils import format_time
 from os import path, listdir, remove
 
 
 # --- globals ---
 url = 'https://www.mirea.ru/schedule/'
+file_links = {}
 
 
 # --- function ---
@@ -30,6 +32,7 @@ def check_schedule(schedule_dir: str) -> bool:
     • schedule_dir - string which contain way to schedule dir
 
     """
+    global file_links
     try:
         remove(path.join(schedule_dir, 'lmod.csv'))
         for sub_dir in range(1, 6):
@@ -38,10 +41,10 @@ def check_schedule(schedule_dir: str) -> bool:
                 full_path = path.join(current_dir, file_name)
                 wb = load_workbook(full_path, read_only=True)
                 last_modified = wb.properties.modified
-                last_update = datetime.fromtimestamp(path.getmtime(full_path))
+                last_update = format_time(datetime.fromtimestamp(path.getmtime(full_path)))
                 with open(path.join(schedule_dir, 'lmod.csv'), 'a', encoding='utf-8') as f:
                     file_writer = csv.writer(f, lineterminator="\r")
-                    file_writer.writerow([sub_dir, file_name, last_modified, last_update])
+                    file_writer.writerow([sub_dir, file_links[file_name], last_modified, last_update])
         wb.close()
         return True
     except:
@@ -57,12 +60,14 @@ def get_schedule(schedule_dir: str) -> bool:
     • schedule_dir - string which contain way to schedule dir
 
     """
+    global file_links
     try:
         r = requests.get(url)
         soup = BeautifulSoup(r.text, features="html.parser")
         links = soup.find_all(href=re.compile(r"КБиСП.*xlsx"))
         for link in links:
             file_name = link.get('href').split('/')[-1]
+            file_links.update({file_name: link.get('href')})
             with open(path.join(schedule_dir, file_name.split()[1], file_name), 'wb') as f:
                 urf = requests.get(link.get('href'))
                 f.write(urf.content)

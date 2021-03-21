@@ -11,7 +11,7 @@ import re
 from rich import print
 from datetime import datetime
 from os import path, mkdir, listdir
-from kbsp_schedule import getting, parsing
+from kbsp_schedule import getting, parsing, updating
 from core.ui import c_print, disp_greetings, user_input
 from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
 
@@ -62,15 +62,6 @@ class KbspSchedule:
         getting.check_schedule(self.schedule_dir)
 
     def com_upd(self):
-        # TODO: Необходимо сделать "умное" обновление.
-        # Скачивание файлов во временное хранилище и сравнение
-        # их последней даты изменения с той, что хранится в lmod.
-        # Если даты на файлах различаются ->
-        #       обновляем этот файл в основном хранилище;
-        #       обновляем все jsonы тех групп, которые были в файлах;
-        #       выводим сообщения об обновленных файлах.
-        # Иначе ->
-        #       выводим сообщение о том, что все файлы свежие.
         pass
 
     def com_group(self, group_name: str):
