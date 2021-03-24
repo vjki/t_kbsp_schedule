@@ -13,7 +13,7 @@ from datetime import datetime
 from os import path, mkdir, listdir
 from kbsp_schedule import getting, parsing, updating
 from core.ui import c_print, disp_greetings, user_input
-from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule
+from core.unicui import display_file_status, display_full_group_schedule, display_dx_group_schedule, display_upd_file_status
 
 
 # -- globals --
@@ -24,6 +24,7 @@ commands = {
     'today': 'Get todays schedule of the week.',
     'tomorrow': 'Get tomorrow schedule of the week.',
     'get': 'Get all schedules files and file status from internet.',
+    'update': 'Show which files need updating.',
     'view': 'Check a the file status',
     'help': 'Get list of all commands.',
     'exit': 'Exit program.'
@@ -62,7 +63,8 @@ class KbspSchedule:
         getting.check_schedule(self.schedule_dir)
 
     def com_upd(self):
-        pass
+        """Smart Updating files."""
+        return updating.update(self.schedule_dir)
 
     def com_group(self, group_name: str):
         """Get json file groups"""
@@ -136,6 +138,14 @@ while True:
             schdeule.com_get()
             c_print("[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
             display_file_status(schdeule.schedule_dir)
+        except AssertionError as e:
+            c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
+    
+    if command == 'update':
+        try:
+            d_upd_file_status = schdeule.com_upd()
+            c_print("[bold green]OK.[/bold green] The file update status will be displayed...",  border="green")
+            display_upd_file_status(d_upd_file_status)
         except AssertionError as e:
             c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 

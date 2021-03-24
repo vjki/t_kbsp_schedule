@@ -14,6 +14,19 @@ from rich.table import Table
 from datetime import datetime
 from rich.console import Console
 
+def display_upd_file_status(d: dict):
+    table = Table(title="Update status")
+    table.add_column("File Name", style="yellow", no_wrap=True)
+    table.add_column("Update status", style="green", no_wrap=True)
+
+    for k, v in d.items():
+        table.add_row(k, "Need update!" if v == 1 else "Don't need updating")
+    
+    console = Console()
+    console.print(table)
+
+    return True
+
 
 def display_file_status(schedule_dir):
     """Visualize data from lmod.csv."""
