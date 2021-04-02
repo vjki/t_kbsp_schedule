@@ -63,8 +63,12 @@ class KbspSchedule:
         getting.check_schedule(self.schedule_dir)
 
     def com_upd(self):
-        """Smart Updating files."""
-        return updating.update(self.schedule_dir)
+        """Status Updating files."""
+        return updating.update_status(self.schedule_dir)
+
+    def com_do_upd(self, d: dict):
+        """Updating old files"""
+        assert updating.update(self.schedule_dir, d)
 
     def com_group(self, group_name: str):
         """Get json file groups"""
@@ -136,16 +140,24 @@ while True:
     if command == 'get':
         try:
             schdeule.com_get()
-            c_print("[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
+            c_print(
+                "[bold green]OK.[/bold green] New schedules was up to date. New status of files will be displayed...", border="green")
             display_file_status(schdeule.schedule_dir)
         except AssertionError as e:
             c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
-    
+
     if command == 'update':
         try:
             d_upd_file_status = schdeule.com_upd()
-            c_print("[bold green]OK.[/bold green] The file update status will be displayed...",  border="green")
+            c_print(
+                "[bold green]OK.[/bold green] The file update status will be displayed...",  border="green")
             display_upd_file_status(d_upd_file_status)
+            if 1 in d_upd_file_status.values():
+                c_print("Do you want to update old files? (y/n)")
+                if user_input().lower() == 'y':
+                    schdeule.com_do_upd(d_upd_file_status)
+                c_print(
+                "[bold green]OK.[/bold green] All file(s) was up to date.",  border="green")
         except AssertionError as e:
             c_print(f"[bold red]Fail.[/bold red] {e}", border='red')
 

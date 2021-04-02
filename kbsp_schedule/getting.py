@@ -23,6 +23,7 @@ url = 'https://www.mirea.ru/schedule/'
 file_links = {}
 
 
+
 # --- function ---
 def check_schedule(schedule_dir: str) -> bool:
     """Write in lmod.csv.
